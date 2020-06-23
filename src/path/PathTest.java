@@ -4,10 +4,8 @@ import java.io.File;
 import java.net.URL;
 
 /**
- * @Author linjing
- * @Description:
- * @Date: Created in 2020/6/18
- * @Modified By:
+ * @author linjing
+ * @date : Created in 2020/6/18
  */
 public class PathTest {
     public static void main(String[] args) throws Exception {
@@ -25,8 +23,8 @@ public class PathTest {
         System.out.println(courseFile);
 
         // 第三种：  file:/D:/IDEAWorkspace/hs-bluetooth-lock/src/applications/bluetooth-api/target/classes/
-        URL xmlpath = PathTest.class.getClassLoader().getResource("");
-        System.out.println(xmlpath);
+        URL xmlPath = PathTest.class.getClassLoader().getResource("");
+        System.out.println(xmlPath);
 
         // 第四种： 获取当前工程路径 D:\IDEAWorkspace\hs-bluetooth-lock
         System.out.println(System.getProperty("user.dir"));
