@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd ">
+
+    <!-- 引入db.properties -->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <!-- 配置数据源1 -->
+    <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+          destroy-method="close">
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="${jdbc.poolsize}"/>
+        <property name="minIdle" value="${jdbc.poolsize}"/>
+        <property name="maxActive" value="${jdbc.poolsize}"/>
+
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="60000"/>
+        <property name="validationQuery" value="SELECT 1 from dual"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="25200000"/>
+
+        <!-- 打开removeAbandoned功能 -->
+        <property name="removeAbandoned" value="true"/>
+        <!-- 1800秒，也就是30分钟 -->
+        <property name="removeAbandonedTimeout" value="3600"/>
+        <!-- 关闭abanded连接时输出错误日志 -->
+        <property name="logAbandoned" value="true"/>
+
+        <!-- 开启Druid的监控统计功能,如果开启数据库密码加密需要注释 -->
+        <property name="filters" value="stat"/>
+        <!-- 配置数据库密码加密，默认不开启，如果需要请开启这个配置-->
+        <!--<property name="filters" value="stat,config" />
+        <property name="connectionProperties" value="config.decrypt=true" />-->
+    </bean>
+
+    <!-- 配置数据源2 该数据源默认关闭，在某些情况下druid数据源不稳定时，可以切换成dbcp数据源-->
+    <!--
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+          <property name="driverClassName">
+              <value>oracle.jdbc.driver.OracleDriver</value>
+          </property>
+          <property name="url" value="${jdbc.url}" />
+          <property name="username" value="${jdbc.username}" />
+          <property name="password" value="${jdbc.password}" />
+          <property name="initialSize" value="${jdbc.poolsize}"/>
+          <property name="maxActive" value="${jdbc.poolsize}"/>
+          <property name="minIdle" value="${jdbc.poolsize}"/>
+          <property name="maxWait" value="60000"/>
+          <property name="removeAbandoned" value="true"/>
+          <property name="removeAbandonedTimeout" value="180"/>
+          <property name="logAbandoned" value="true"/>
+          <property name="testOnBorrow" value="false"/>
+          <property name="testOnReturn" value="false"/>
+          <property name="testWhileIdle" value="true"/>
+          <property name="validationQuery" value="SELECT 1 from dual"/>
+          <property name="timeBetweenEvictionRunsMillis" value="60000" />
+          <property name="numTestsPerEvictionRun" value="${jdbc.poolsize}"/>
+    </bean>
+    -->
+
+    <!-- 配置数据源3 该数据源默认关闭，在某些情况下druid/dbcp数据源不稳定时，可以切换成该数据源-->
+    <!--
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/reportjndi</value>
+        </property>
+        <property name="resourceRef">
+            <value>true</value>
+        </property>
+    </bean>
+    -->
+
+    <!-- 配置 Spring 的 org.springframework.jdbc.core.JdbcTemplate -->
+    <!-- JDBC配置1 -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+    </bean>
+
+    <!-- JDBC配置2 -->
+    <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+
+    <!-- 测试 SpEL: 可以为属性进行动态的赋值(了解) -->
+    <!--<bean id="girl" class="com.helloworld.User">
+        <property name="userName" value="周迅"></property>
+    </bean>-->
+
+    <!-- <bean id="boy" class="com.helloworld.User" init-method="init" destroy-method="destroy">
+        <property name="userName" value="高胜远"></property> <property name="wifeName"
+        value="#{girl.userName}"></property> </bean> -->
+
+    <!-- autowired测试，自动装配测试 -->
+    <!-- <bean id="people" class="test.spring.autowired.Person" scope="prototype"
+           autowire="byName">
+         <property name="name" value="小明"></property>
+         <property name="cat" ref="cat222"></property>
+        <property name="cat" ref="cat1"></property>
+    </bean>
+    <bean id="cat222" class="test.spring.autowired.Cat" scope="prototype">
+        <property name="name" value="波斯猫"></property>
+    </bean>
+    -->
+
+
+    <!--context:component-scan 指定 扫描的包 -->
+    <!--可以通过 resource-pattern 指定扫描的资源, resource-pattern="myrepository/*.class"
+        的含义： 只扫描 base-package 对应包下的 目录为 myrepository 的所有java Bean -->
+    <!-- <context:component-scan base-package="imooc_spring.test.anotation"
+        resource-pattern="myrepository/*.class"></context:component-scan> -->
+
+    <!-- context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"
+        子节点指定排除哪些注解 context:include-filter type="annotation" 需要结合context:component-scan
+        标签的 use-default-filters="false"来使用 context:exclude-filter type="assignable"
+        这个expression指的是自己写的类，意思排除哪些类 expression="imooc_spring.test.anotation.TestObj" -->
+    <context:component-scan base-package="dao.jdbc.spring.jdbctemplate">
+        <!-- <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"
+            /> -->
+
+        <!-- <context:exclude-filter type="assignable" expression="imooc_spring.test.anotation.TestObj"
+            /> -->
+    </context:component-scan>
+
+    <!-- aop测试,需要引入aop命名空间 -->
+    <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+    <!-- aop annotationType, -->
+
+
+    <!-- 切点的bean -->
+    <!--<bean class="com.aop.xmltype.CalculatorImplxml" id="calImplxml"></bean>-->
+    <!-- 切面的bean -->
+    <!--<bean class="com.aop.xmltype.MyAspectxml" id="myaspxml"></bean>-->
+
+    <!--<bean class="com.aop.xmltype.Diary" id="myDiary"></bean>-->
+    <!-- aop xmlType，用xml的形式配置AOP前置通知 -->
+    <!--<aop:config>-->
+    <!--&lt;!&ndash;aop:pointcut 其实放在这儿也可以 &ndash;&gt;-->
+    <!--&lt;!&ndash; <aop:pointcut expression="execution (* com.aop.xmltype.CalculatorImplxml.*(..))"-->
+    <!--id="pointcut1" /> &ndash;&gt;-->
+
+    <!--&lt;!&ndash; 配置切面和通知 ，aop:aspect标签需要通过ref指定配置好的bean，id随便配置或者不配置，id的值可以随意起 &ndash;&gt;-->
+    <!--<aop:aspect id="myaspxml" ref="myaspxml" order="2">-->
+    <!--&lt;!&ndash; 配置切点，即 要被记日记的对象， aop:pointcut 放在这儿也可以 ,切点不需要根对应的bean相关联，-->
+    <!--只要expression指定的方法所在的类被Spring扫描得到就行，即只要所在的类配置了bean就可以 &ndash;&gt;-->
+    <!--<aop:pointcut expression="execution (* com.aop.xmltype.CalculatorImplxml.*(..))"-->
+    <!--id="pointcut1" />-->
+    <!--&lt;!&ndash; 切面里的具体的用于记录的方法就是一个通知，需要用通过pointcut-ref来指定具体的切点， &ndash;&gt;-->
+    <!--<aop:before method="logBefore" pointcut-ref="pointcut1" />-->
+    <!--<aop:after method="logAfter" pointcut-ref="pointcut1" />-->
+    <!--</aop:aspect>-->
+
+    <!--<aop:aspect ref="myDiary" order="3">-->
+    <!--&lt;!&ndash; execution (* com.aop.*.*.*(..))  包含了 com.aop.xmltype.CalculatorImplxml.*(..)) 的这种情况  &ndash;&gt;-->
+    <!--&lt;!&ndash; <aop:pointcut expression="execution (* com.aop.*.*.*(..))" id="allPointcut"/> &ndash;&gt;-->
+    <!--<aop:pointcut expression="execution (* com.aop.xmltype.CalculatorImplxml.*(..))" id="allPointcut"/>-->
+    <!--<aop:before method="myEnd" pointcut-ref="allPointcut"/>-->
+    <!--</aop:aspect>-->
+
+    <!--</aop:config>-->
+
+</beans>
