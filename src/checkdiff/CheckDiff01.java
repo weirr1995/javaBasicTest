@@ -1,11 +1,8 @@
 package checkdiff;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StringUtils;
@@ -101,7 +98,7 @@ public class CheckDiff01 {
     }
 
     private boolean oneToOneCheck(Map<String, Object> objectMap,  Map<String, Object> targetObjectMap,String sourceFlag) {
-        if( objectMap.containsKey("isNeedhidden") && true == objectMap.get("isNeedhidden")){
+        if( objectMap.containsKey("isNeedhidden") && true == (Boolean)objectMap.get("isNeedhidden")){
             return true;
         }
         String beginDate = String.valueOf(objectMap.get("C_BEGINDATE"));

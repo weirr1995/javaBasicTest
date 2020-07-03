@@ -1,4 +1,4 @@
-package concurrent.threadPoolExecutor;
+package checkdiff;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import java.util.Map;
  * @author linjing
  * @date: Created in 2020/6/30
  */
-public class CheckDiffTask implements Runnable {
+public  class CheckDiffTask implements Runnable {
     private Map initMap;
     private static final String schema = "gjdfppos";
 
