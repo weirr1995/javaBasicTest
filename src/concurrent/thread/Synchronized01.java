@@ -1,0 +1,46 @@
+package concurrent.thread;
+
+/**
+ * @version V1.0
+ * @author: zouwh
+ * @description: 认识synchronized关键字
+ * @date: 2020/7/5 3:21 PM
+ */
+public class Synchronized01 {
+    /**
+     *解决线程出现竞态条件的问题
+     *synchronized(对象){//线程1 线程2（Blocked）
+     *临界区
+     *}
+     */
+
+    private   int i=0;
+    private  static  Object room = new Object();
+
+    public static void main(String[] args) throws Exception {
+        Synchronized01 demo01 = new Synchronized01();
+        Thread thread1 = new Thread(()->{
+            for(int j=0;j<5000;j++){
+                synchronized (room){
+                    demo01.i++;
+                }
+            }
+        });
+
+        Thread thread2 = new Thread(()->{
+            for(int j=0;j<5000;j++){
+                synchronized (room){
+                    demo01.i--;
+                }
+            }
+        });
+        thread1.start();
+        thread2.start();
+        thread1.join();
+        thread2.join();
+
+        System.out.println(demo01.i);
+    }
+
+
+}
