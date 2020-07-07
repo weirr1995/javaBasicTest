@@ -1,4 +1,4 @@
-package threadblock;
+package concurrent.thread;
 
 /**
  * @author linjing

@@ -1,11 +1,11 @@
-package concurrent;
+package concurrent.thread;
 
 import java.util.concurrent.CountDownLatch;
 
 /**
  * 真正的并发 https://blog.csdn.net/xiamiflying/article/details/89915760
  */
-public class LatchTest {
+public class TestConcurrent01 {
 
     public static void main(String[] args) throws InterruptedException {
         Runnable taskTemp = new Runnable() {
@@ -28,8 +28,8 @@ public class LatchTest {
             }
         };
 
-        LatchTest latchTest = new LatchTest();
-        latchTest.startTaskAllInOnce(5, taskTemp);
+        TestConcurrent01 testConcurrent01 = new TestConcurrent01();
+        testConcurrent01.startTaskAllInOnce(5, taskTemp);
     }
 
     public long startTaskAllInOnce(int threadNums, final Runnable task) throws InterruptedException {

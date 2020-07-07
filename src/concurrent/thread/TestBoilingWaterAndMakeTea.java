@@ -1,4 +1,4 @@
-package concurrent;
+package concurrent.thread;
 
 /**
  * @version V1.0
@@ -6,7 +6,7 @@ package concurrent;
  * @description: 华罗庚 统筹方法 烧水泡茶
  * @date: 2020/7/5 2:21 PM
  */
-public class BoilingWaterAndMakeTea {
+public class TestBoilingWaterAndMakeTea {
     /*
     * 洗茶壶(1min） 烧水（15min)  洗茶杯(1min） 拿茶叶(1min） 泡茶(1min）
     * 采用2个线程干活最优 ：

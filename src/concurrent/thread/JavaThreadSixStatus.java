@@ -18,7 +18,7 @@ public class JavaThreadSixStatus {
             }
         });
         thread2.start();
-        //限时等待
+        //限时等待:不释放锁
         Thread thread3 = new Thread(()->{
             synchronized (JavaThreadSixStatus.class) {
                 try {
@@ -29,7 +29,7 @@ public class JavaThreadSixStatus {
             }
         });
         thread3.start();
-        //不限时等待
+        //不限时等待：不释放锁
         Thread thread4 = new Thread(()->{
             try {
                 thread3.join();
@@ -38,6 +38,7 @@ public class JavaThreadSixStatus {
             }
         });
         thread4.start();
+        //阻塞：释放锁，让出CPU
         Thread thread5 = new Thread(()->{
             synchronized (JavaThreadSixStatus.class) {
                 try {
@@ -48,7 +49,9 @@ public class JavaThreadSixStatus {
             }
         });
         thread5.start();
-        Thread thread6 = new Thread(()->{
+
+        //终止态
+     Thread thread6 = new Thread(()->{
             int i=0;
         });
         thread6.start();

@@ -6,13 +6,14 @@ package concurrent.thread;
  * @description: 认识synchronized关键字
  * @date: 2020/7/5 3:21 PM
  */
+/**
+ * 临界区： 一个实例内，有读又有写
+ * 竞态：   同一时刻，多线程运行临界区代码
+ * 解决线程出现竞态条件的问题：
+ * synchronized(对象){//线程1 线程2（Blocked）
+ *}
+ */
 public class Synchronized01 {
-    /**
-     *解决线程出现竞态条件的问题
-     *synchronized(对象){//线程1 线程2（Blocked）
-     *临界区
-     *}
-     */
 
     private   int i=0;
     private  static  Object room = new Object();

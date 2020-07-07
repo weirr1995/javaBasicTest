@@ -20,7 +20,7 @@ public class PathTest {
         // 第二种：获取项目路径    D:\IDEAWorkspace\hs-bluetooth-lock
         File directory = new File("");// 参数为空
         String courseFile = directory.getCanonicalPath();
-        System.out.println(courseFile);
+        System.out.println("courseFile"+courseFile);
 
         // 第三种：  file:/D:/IDEAWorkspace/hs-bluetooth-lock/src/applications/bluetooth-api/target/classes/
         URL xmlPath = PathTest.class.getClassLoader().getResource("");

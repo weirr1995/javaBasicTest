@@ -15,10 +15,10 @@ public class FindDates {
     public static List<String> findDates(String stime, String etime)
             throws ParseException {
         List<String> allDate = new ArrayList();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Date dBegin = sdf.parse(stime);
         Date dEnd = sdf.parse(etime);
-        allDate.add(sdf.format(dBegin));
+        //allDate.add(sdf.format(dBegin));
         Calendar calBegin = Calendar.getInstance();
         // 使用给定的 Date 设置此 Calendar 的时间
         calBegin.setTime(dBegin);
@@ -31,16 +31,19 @@ public class FindDates {
             calBegin.add(Calendar.DAY_OF_MONTH, 1);
             allDate.add(sdf.format(calBegin.getTime()));
         }
+        for(String time : allDate) {
+            System.out.println(time);
+        }
         return allDate;
     }
     public static void main(String[] args) {
         //测试数据
-        String stime = "2019-05-01";
-        String etime = "2019-05-05";
+        String stime = "20190501";
+        String etime = "20190505";
         //集合中包含2019-05-01/2019-05-05，不需要可去除
         List<String> list = new ArrayList<String>();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             long s = Long.valueOf(sdf.parse(stime).getTime());
             long e = Long.valueOf(sdf.parse(etime).getTime());
             //只有结束时间大于开始时间时才进行查询
