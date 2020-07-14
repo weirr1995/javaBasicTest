@@ -13,13 +13,13 @@ package concurrent.thread;
  * synchronized(对象){//线程1 线程2（Blocked）
  *}
  */
-public class Synchronized01 {
+public class Block_Synchronized {
 
     private   int i=0;
     private  static  Object room = new Object();
 
     public static void main(String[] args) throws Exception {
-        Synchronized01 demo01 = new Synchronized01();
+        Block_Synchronized demo01 = new Block_Synchronized();
         Thread thread1 = new Thread(()->{
             for(int j=0;j<5000;j++){
                 synchronized (room){

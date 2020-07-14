@@ -10,7 +10,7 @@ import org.junit.Test;
  * 被打断线程有料理后事的机会
  */
 @Slf4j
-public class TwoPhaseTemination {
+public class TestTwoPhaseTemination {
     private Thread mointorThread;
 
     //启动监控线程
@@ -46,8 +46,8 @@ public class TwoPhaseTemination {
 
     @Test
     public  void test() {
-        TwoPhaseTemination twoPhaseTemination = new TwoPhaseTemination();
-        twoPhaseTemination.start();
-        twoPhaseTemination.stop();
+        TestTwoPhaseTemination testTwoPhaseTemination = new TestTwoPhaseTemination();
+        testTwoPhaseTemination.start();
+        testTwoPhaseTemination.stop();
     }
 }
