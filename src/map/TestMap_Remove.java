@@ -18,7 +18,6 @@ public class TestMap_Remove {
         HashMap<String, Object> stringObjectHashMap = new HashMap<>();
         stringObjectHashMap.remove("1");
         log.debug("结果是：不会报错");
-
     }
 
 }
