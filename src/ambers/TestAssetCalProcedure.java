@@ -50,7 +50,7 @@ import java.util.Map;
  *     EN_ZQ_PJ    number(16,2) ,
  *     EN_ZQ_QT    number(16,2) ,
  *     EN_JWTZ    number(16,2) ,
- *     EN_QTZCTZ    number(16,2) ,
+ *     EN_QTZCTZ   varchar2(255) ,
  *     EN_QLF  number(16,2)
  * );
  * insert into gjdftreportrecord_test (vc_gtlkmcs,EN_DFFAZCLHJ, EN_DFFAZCJZ, EN_YHCK, EN_GQTZ, EN_QTGQTZ, EN_DXZFTZ, EN_XSBTZ, EN_JNZQ_JSBFJ, EN_JNZQ_CCBZJ, EN_JNZQ_GPTZ, EN_JNZQ_ZQTZ, EN_JNZQ_ZCZCZQ, EN_JNZQ_JJTZ, EN_JNZQ_QTZQTZ, EN_MRFSJRZC, EN_LCCP_YH, EN_LCCP_XT, EN_LCCP_JJ, EN_LCCP_BX, EN_LCCP_ZQ, EN_LCCP_QH, EN_LCCP_SM, EN_LCCP_WBA, EN_LLTZ, EN_ZQ_YHWD, EN_ZQ_XTDK, EN_ZQ_YSZK, EN_ZQ_SYQ, EN_ZQ_PJ, EN_ZQ_QT, EN_JWTZ, EN_QTZCTZ, EN_QLF)
