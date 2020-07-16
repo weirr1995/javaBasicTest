@@ -5,8 +5,8 @@ package dao.jdbc;
  * @date: Created in 2020/6/30
  */
 
-import oracle.jdbc.driver.OracleCallableStatement;
-import oracle.jdbc.driver.OracleTypes;
+import oracle.jdbc.OracleCallableStatement;
+import oracle.jdbc.OracleTypes;
 import org.junit.Test;
 
 import java.sql.CallableStatement;
