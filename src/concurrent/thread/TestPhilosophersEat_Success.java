@@ -3,6 +3,7 @@ package concurrent.thread;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
@@ -34,7 +35,6 @@ public class TestPhilosophersEat_Success {
         SmartPhilosopher philosopher3 = new SmartPhilosopher("亚里士多德",chopstick3,chopstick4);
         SmartPhilosopher philosopher4 = new SmartPhilosopher("孔子",chopstick4,chopstick5);
         SmartPhilosopher philosopher5 = new SmartPhilosopher("哥白尼",chopstick5,chopstick1);
-
 
 
         philosopher1.start();
