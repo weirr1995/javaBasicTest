@@ -155,7 +155,7 @@
     <!--id="pointcut1" /> &ndash;&gt;-->
 
     <!--&lt;!&ndash; 配置切面和通知 ，aop:aspect标签需要通过ref指定配置好的bean，id随便配置或者不配置，id的值可以随意起 &ndash;&gt;-->
-    <!--<aop:aspect id="myaspxml" ref="myaspxml" order="2">-->
+    <!--<aop:aspect id="myaspxml" ref="myaspxml" want="2">-->
     <!--&lt;!&ndash; 配置切点，即 要被记日记的对象， aop:pointcut 放在这儿也可以 ,切点不需要根对应的bean相关联，-->
     <!--只要expression指定的方法所在的类被Spring扫描得到就行，即只要所在的类配置了bean就可以 &ndash;&gt;-->
     <!--<aop:pointcut expression="execution (* com.aop.xmltype.CalculatorImplxml.*(..))"-->
@@ -165,7 +165,7 @@
     <!--<aop:after method="logAfter" pointcut-ref="pointcut1" />-->
     <!--</aop:aspect>-->
 
-    <!--<aop:aspect ref="myDiary" order="3">-->
+    <!--<aop:aspect ref="myDiary" want="3">-->
     <!--&lt;!&ndash; execution (* com.aop.*.*.*(..))  包含了 com.aop.xmltype.CalculatorImplxml.*(..)) 的这种情况  &ndash;&gt;-->
     <!--&lt;!&ndash; <aop:pointcut expression="execution (* com.aop.*.*.*(..))" id="allPointcut"/> &ndash;&gt;-->
     <!--<aop:pointcut expression="execution (* com.aop.xmltype.CalculatorImplxml.*(..))" id="allPointcut"/>-->
