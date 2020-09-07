@@ -1,4 +1,4 @@
-package map;
+package util.map;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -35,11 +35,11 @@ public class TestMap_ToList {
         map.put("C_TRUSTEECODE","615");
         maps.add(map);
 
-        List parse = convertMapsToList(maps,TaatCollectDataSetupEntity.class);
+       /* List parse = convertMapsToList(maps,TaatCollectDataSetupEntity.class);
         for (Object t : parse) {
             Method method2 = entity.getClass().getMethod("setCreateDate", String.class);
             method2.invoke(entity, createDate);
-        }
+        }*/
     }
 
     /**
@@ -84,7 +84,7 @@ public class TestMap_ToList {
         Iterator it = array.iterator();
         while (it.hasNext()){
              Field field =(Field)it.next();
-            SourceField annotation = field.getAnnotation(SourceField.class);
+            map.SourceField annotation = field.getAnnotation(map.SourceField.class);
             if(annotation != null) {
                 String mappedName = annotation.name();
                 if (!StringUtils.isEmpty(mappedName) && map.containsKey(mappedName)) {

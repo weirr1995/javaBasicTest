@@ -1,7 +1,6 @@
-package dao.jdbc;
+package sql.oracle;
 
 import com.alibaba.druid.util.StringUtils;
-import io.netty.util.internal.StringUtil;
 import org.junit.Test;
 
 import java.lang.annotation.Target;
