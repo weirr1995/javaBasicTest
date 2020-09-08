@@ -28,4 +28,15 @@ public class TestMap_valueReference {
     public void test3(Map map){
         map.put("a","aa");
     }
+
+
+    @Test
+    public void test4(){
+        Map map1 = new HashMap();
+        map1.put("detail","aaa");
+        Map map2 = new HashMap();
+        map2.putAll(map1);
+        System.out.println(map2.toString());
+    }
+
 }
