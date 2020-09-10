@@ -4,10 +4,7 @@ import org.junit.Test;
 import sql.JDBCUtils;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * @author linjing
@@ -111,6 +108,61 @@ public class TestDblink {
         System.out.println("dblink查询，设置自动提交事务，oracle会产生事务,且不会自动释放！！！");
         System.in.read();
     }
+
+    @Test
+    public void testInsert1()  throws SQLException, IOException{
+        Connection conn = JDBCUtils.getConnection();
+        //设置自动提交
+        conn.setAutoCommit(true);
+        //2、dblink插入
+        String sql2 = "insert into  test_lj@dfta_link(name) values ('linjing')";
+        PreparedStatement pstmt = conn.prepareStatement(sql2) ;
+        int count = pstmt.executeUpdate(sql2) ;
+        System.out.println(count);
+        // conn.commit();
+       /* stmt.close();
+        rs.close();
+        conn.close();*/
+        System.out.println("dblink查询，设置自动提交事务，oracle会产生事务,会自动释放！！！这点与查询dblink不同，查询dblink不会自动释放！");
+        System.in.read();
+    }
+
+    @Test
+    public void testInsert2()  throws SQLException, IOException{
+        Connection conn = JDBCUtils.getConnection();
+        //设置自动提交
+        conn.setAutoCommit(false);
+        //2、dblink插入
+        String sql2 = "insert into  test_lj@dfta_link(name) values ('linjing')";
+        PreparedStatement pstmt = conn.prepareStatement(sql2) ;
+        int count = pstmt.executeUpdate(sql2) ;
+        System.out.println(count);
+        // conn.commit();
+       /* stmt.close();
+        rs.close();
+        conn.close();*/
+        System.out.println("dblink查询，设置显式提交事务，oracle会产生事务,不会自动释放！！！");
+        System.in.read();
+    }
+
+    @Test
+    public void testInsert3()  throws SQLException, IOException{
+        Connection conn = JDBCUtils.getConnection();
+        //设置自动提交
+        conn.setAutoCommit(false);
+        //2、dblink插入
+        String sql2 = "insert into  test_lj@dfta_link(name) values ('linjing')";
+        PreparedStatement pstmt = conn.prepareStatement(sql2) ;
+        int count = pstmt.executeUpdate(sql2) ;
+        System.out.println(count);
+         conn.commit();
+       /* stmt.close();
+        rs.close();
+        conn.close();*/
+        System.out.println("dblink查询，设置显式提交事务，且提交，oracle会产生事务,会自动释放！！！");
+        System.in.read();
+    }
+
 
     @Test
     public void  right()  throws SQLException, IOException{
