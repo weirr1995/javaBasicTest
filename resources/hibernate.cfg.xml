@@ -7,7 +7,7 @@
         <!-- mysql数据库驱动 -->
         <property name="hibernate.connection.driver_class">oracle.jdbc.OracleDriver</property>
         <!-- oracle数据库名称 -->
-        <property name="hibernate.connection.url">jdbc:oracle:thin:@172.30.5.61:1521:dao</property>  <!-- 写后面的主要是为了传汉字参数时不乱码 -->
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@127.0.0.1:1521:dao</property>  <!-- 写后面的主要是为了传汉字参数时不乱码 -->
         <!-- 数据库的登陆用户名 -->
         <property name="hibernate.connection.username">app_taat</property>
         <!-- 数据库的登陆密码 -->
