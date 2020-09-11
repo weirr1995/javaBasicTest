@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- mysql数据库驱动 -->
+        <property name="hibernate.connection.driver_class">oracle.jdbc.OracleDriver</property>
+        <!-- oracle数据库名称 -->
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@172.30.5.61:1521:dao</property>  <!-- 写后面的主要是为了传汉字参数时不乱码 -->
+        <!-- 数据库的登陆用户名 -->
+        <property name="hibernate.connection.username">app_taat</property>
+        <!-- 数据库的登陆密码 -->
+        <property name="hibernate.connection.password">app_taat</property>
+        <!-- 方言：为每一种数据库提供适配器，方便转换 -->
+<!--
+        <property name="hibernate.dialect">org.hibernate.dialect.OracleDialect</property>
+-->
+
+        <!--XML方法使用时，不加这句会报org.hibernate.MappingException: Unknown entity: sql.hibernate.Student -->
+        <mapping resource="sql/hibernate/Student.hbm.xml"/>
+        <!--Annotation方法使用时，引入映射文件 -->
+         <mapping class="sql.hibernate.Student"/>
+    </session-factory>
+</hibernate-configuration>
