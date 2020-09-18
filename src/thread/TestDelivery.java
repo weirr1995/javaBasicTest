@@ -16,7 +16,7 @@ import java.util.*;
 @Slf4j
 public class TestDelivery {
     @Test
-    public  void test() throws InterruptedException {
+    public  void test() {
         PlateForm plateForm = new PlateForm("美团");
         Restaurant restaurant  = new Restaurant("1","皇帝大");
         restaurant.joinPlateForm(plateForm);
@@ -27,8 +27,6 @@ public class TestDelivery {
 
         customer.login(plateForm);
         customer.order("1","稻香鱼");
-        Food food = customer.fetchFood();
-        customer.eat(food);
 
     }
 }
@@ -87,7 +85,7 @@ class Customer extends  Thread{
         this.order = order;
         log.debug("取餐");
         try{
-            this.food= this.plateForm.fetchFood(order);
+            fetchFood(order);
         }catch (Exception e){
             log.debug("取餐失败。。。");
         }
@@ -97,22 +95,32 @@ class Customer extends  Thread{
 
     }
 
+    private void fetchFood(Order order) {
+        synchronized (order){
+            String result= this.plateForm.foodResultToCustomer.get(order);
+            notifyAll();
+        }
+    }
+
     public void eat(Food food){
         log.debug(food.getFoodName()+"好吃。。。");
     }
 
-    public Food fetchFood() {
-        return this.plateForm.fetchFood(this.order);
-    }
 }
 
 @Slf4j
-class PlateForm implements Runnable {
+class PlateForm {
     private final String plateFormName;
     public LinkedList<Order> orderLinkList = new LinkedList<>();
+    public LinkedList<TakeOutBoy> takeOutBoyList = new LinkedList<>();
     public static Map<String,Restaurant> restaurants = new HashMap<>();
-    public static Map<String,TakeOutBoy> takeoutBoyMap = new HashMap<>();
-    public static Map<String, Food> resultMap = new Hashtable<>();
+
+    public Object orderLock = new Object();
+    public Object takeOutBoyLock = new Object();
+    public Object restaurantsLock = new Object();
+
+    public  Map<String, String> foodResultToCustomer = new Hashtable<>();
+    public  Map<TakeOutBoy, Food> foodResultToTakOutBoy = new Hashtable<TakeOutBoy, Food>();
 
     public PlateForm(String plateFormName) {
         this.plateFormName = plateFormName;
@@ -122,54 +130,79 @@ class PlateForm implements Runnable {
         this.restaurants.put(restaurant.getRestaurantId(),restaurant);
     }
 
-    public void acceptTakeOutBoyJoin(TakeOutBoy takeOutBoy) {
-        this.takeoutBoyMap.put(takeOutBoy.getId(),takeOutBoy);
-    }
-
-    public   void acceptOrder(Customer customer,String restaurantId, String wantFoodName) {
-        Order order = createOrder(customer, restaurantId, wantFoodName);
-        this.orderLinkList.push(order);
-        notifyAll();
-    }
-
-    public Order createOrder(Customer customer,String restaurantId, String wantFoodName) {
-        Order order = new Order(customer,this,restaurantId,wantFoodName);
-        this.orderLinkList.push(order);
-        return order;
-    }
-
-    public  synchronized  Order assignOrder() {
-        while (this.orderLinkList.isEmpty()){
-            log.debug("暂时没有订单。。。请等待！");
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    /**订单生产者**/
+    public  Order createOrder(Customer customer,String restaurantId, String wantFoodName) {
+        synchronized (orderLock){
+            Order order = new Order(customer,this,restaurantId,wantFoodName);
+            this.orderLinkList.push(order);
+            notifyAll();
+            return order;
         }
-        Order order = this.orderLinkList.pop();
-        notifyAll();
-        return order;
     }
 
-    public void orderCompelete(Order order, Food food) {
-        this.resultMap.put(order.getOrderId(),food);
-    }
-
-    public Food fetchFood(Order order) {
-        return (Food)this.resultMap.get(order.getOrderId());
-    }
-
-    @Override
-    public void run() {
-        while (true){
-            if(!this.orderLinkList.isEmpty()){
-                this.orderLinkList.poll()
+    /**订单通知者**/
+    public    Order getOrder() {
+        synchronized (orderLock){
+            while (this.orderLinkList.isEmpty()){
+                log.debug("暂时没有订单。。。请等待！");
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            //分配订单
-            //完成订单，通知客户
+            Order order = this.orderLinkList.peek();
+            notifyAll();
+            return order;
         }
+    }
 
+    /**订单消费者**/
+    public    Order consumOrder() {
+        synchronized (orderLock){
+            while (this.orderLinkList.isEmpty()){
+                log.debug("暂时没有订单。。。请等待！");
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            Order order = this.orderLinkList.pop();
+            notifyAll();
+            return order;
+        }
+    }
+
+    /**外卖小哥加入**/
+    public  TakeOutBoy acceptTakeOutBoy(TakeOutBoy takeOutBoy) {
+        synchronized (takeOutBoyLock){
+            this.takeOutBoyList.push(takeOutBoy);
+            notifyAll();
+            return takeOutBoy;
+        }
+    }
+
+
+    /** 派送结果 ，客户同步等待**/
+    public void notifyCustomer(Order order,String result) {
+        synchronized (order){
+            this.foodResultToCustomer.put(order.getOrderId(),result);
+            notifyAll();
+        }
+    }
+
+
+    public void notifyTakeOutBoy(Order order, Food food) {
+        TakeOutBoy takeOutBoy = order.getTakeOutBoy();
+        sendMsg(takeOutBoy,food);
+    }
+
+    private void sendMsg(TakeOutBoy takeOutBoy, Food food) {
+        synchronized (takeOutBoy){
+            this.foodResultToTakOutBoy.put(takeOutBoy,food);
+            notifyAll();
+        }
     }
 }
 
@@ -187,7 +220,8 @@ class TakeOutBoy implements Runnable{
     }
 
     public void joinPlateForm(PlateForm plateForm) {
-        this.plateForm.acceptTakeOutBoyJoin(this);
+        this.plateForm = plateForm;
+        this.plateForm.acceptTakeOutBoy(this);
     }
 
     public String getId() {
@@ -195,39 +229,45 @@ class TakeOutBoy implements Runnable{
     }
 
 
-    public void delivery(Order order) {
+    public Food delivery(Order order) {
         String result = "";
-        this.food  = order.getRestaurant().fetchFood(order);
+        Food food  = fetchFood(order);
         log.debug("努力的送餐中。。。。");
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        log.debug("送外卖{}成功！",this.food.getFoodName()) ;
-        this.notifyAll();
+        log.debug("送外卖{}成功！",food.getFoodName()) ;
+        return food;
     }
 
-    private void notifyCustomer(String result,Order order) {
-        this.plateForm.orderCompelete(order,result,this.food);
+    private Food fetchFood(Order order) {
+        synchronized (this){
+            Food food = this.plateForm.foodResultToTakOutBoy.get(this);
+            notifyAll();
+            return food;
+        }
     }
 
-
-    public void compelete(Order order) {
-        String result = "放到您的楼下快递柜了，请自行提取！";
-        notifyCustomer(result,order);
+    public void orderCompelete(Order order, Food food) {
+        if(food == null){
+            this.plateForm.notifyCustomer(order,"送餐失败，送餐过程出现意外！非常抱歉！");
+            return;
+        }
+        this.plateForm.notifyCustomer(order,"送餐成功，您的外卖已到楼下，请自行提取！");
     }
 
     @Override
     public void run() {
         while(true){
             //抢单
-            Order order = this.plateForm.assignOrder();
+            Order order = this.plateForm.getOrder();
+            order.setTakeOutBoy(this);
             //送单
-            delivery(order);
+            Food food = delivery(order);
             //抵达联系客户
-            compelete(order);
-
+            orderCompelete(order,food);
         }
     }
 }
@@ -325,15 +365,19 @@ class  Restaurant implements  Runnable {
     @Override
     public void run() {
         while (true){
-            Order order = this.plateForm.assignOrder();
+            Order order = this.plateForm.consumOrder();
             log.debug("拿到了{}订单",order.getOrderId());
             try{
-                cook(order);
+                Food food = cook(order);
+                notifyTakeOutBoy(order,food);
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
+    }
 
+    private void notifyTakeOutBoy(Order order, Food food) {
+        this.plateForm.notifyTakeOutBoy(order,food);
     }
 
     public void joinPlateForm(PlateForm plateForm) {
@@ -348,6 +392,7 @@ class  Restaurant implements  Runnable {
         log.debug(order.getWantFoodName()+"炒好了！");
         return food;
     }
+
 }
 
 @Slf4j
