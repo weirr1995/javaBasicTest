@@ -42,10 +42,20 @@ public class TestDelivery {
         takeOutBoy2.start();
 
 
-        for(int i=0;i<10;i++){
+        for(int i=0;i<5;i++){
             Customer customer1 = new Customer("张三");
             customer1.login(plateForm);
             customer1.order("1","稻香鱼"+i);
+            Customer customer2 = new Customer("李四");
+            customer2.login(plateForm);
+            customer2.order("1","蛋炒饭"+i);
+
+            Customer customer3 = new Customer("何YY");
+            customer3.login(plateForm);
+            customer3.order("2","牛排"+i);
+            Customer customer4 = new Customer("王XX");
+            customer4.login(plateForm);
+            customer4.order("2","饮料"+i);
         }
 
 
@@ -105,14 +115,14 @@ class Customer extends  Thread{
     @Override
     public void run(){
         Order order = this.plateForm.createOrder(this,this.restaurantId, this.wantFoodName);
-        log.debug("点一份{}，订单编号{}",this.wantFoodName,order.getOrderId());
+        log.info("点一份{}，订单编号{}",this.wantFoodName,order.getOrderId());
         this.order = order;
         try{
             food =fetchFood(order);
         }catch (Exception e){
             log.debug("取餐失败。。。");
         }
-        log.debug("拿到外卖{},订单编号{}", food.getFoodName(),order.getOrderId());
+        log.info("拿到外卖{},订单编号{}", food.getFoodName(),order.getOrderId());
         log.debug("开吃！{}，订单编号:{}", food.getFoodName(),order.getOrderId());
         eat(food);
 
@@ -179,12 +189,12 @@ class PlateForm {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            restaurant.orderLock.notifyAll();
+            restaurant.orderLock.notify();
         }
 
         synchronized (this.ordeLockForTakeOutBoy){
             this.orderQueueForTackOutBoy.offer(order);
-            this.ordeLockForTakeOutBoy.notifyAll();
+            this.ordeLockForTakeOutBoy.notify();
         }
 
         return order;
@@ -232,7 +242,7 @@ class PlateForm {
     public void notifyCustomerFetchFood(Order order, Food food) {
         synchronized (order.foodLock){
             this.customerFoodBox.put(order,food);
-            order.foodLock.notifyAll();
+            order.foodLock.notify();
         }
     }
 
@@ -251,7 +261,7 @@ class PlateForm {
     public void notifyPlateFormDiliveryFailed(Order order, String cause) {
         synchronized (order){
             this.errorOrderCenter.put(order,cause);
-            notifyAll();
+            notify();
         }
     }
 
@@ -442,17 +452,10 @@ class  Restaurant extends   Thread {
 
 
     public void notifyTakeOutBoy(Order order, Food food) {
-        while (order.getTakeOutBoy() == null){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         synchronized (this.foodAreaLock){
             this.foodArea.put(order,food);
             log.debug(order.getWantFoodName()+"炒好了！订单编号{}",order.getOrderId());
-            this.foodAreaLock.notifyAll();
+            this.foodAreaLock.notify();
         }
 
     }
